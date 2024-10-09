@@ -1,6 +1,1 @@
-lst = []
-
-for i in range(10):
-    lst.append([i, 0])
-
-print(lst)
+print(type(open(r"lab_discrete_math1/test_csv.csv", "r")))
