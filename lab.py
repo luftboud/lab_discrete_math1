@@ -3,16 +3,22 @@ Functions for reading relations from file which contains matrix
 and writing new file according to given relations
 '''
 
+# # ****************************************
+# # Task 1
+# # ****************************************
+
 def matrix_to_relations(matrix):
     '''
     A function for turning matrix into a list of relations.
     :param matrix: list, a list of lists which contain number of 0 and 1 and represents a matrix.
-    :return: list, a list of tuples, each of which contain two digits, representing relations.
+    :return: list, a list of tuples, each of which contain two digits - (x,y є Z)(x >= 1, y >= 1) - 
+    and represents relations.
     '''
     a = 0
     b = -1
     lst = []
-    while a < 5:
+    size = len(matrix)
+    while a < size:
         b += 1
         if matrix[a][b] == '"1"':
             lst.append((a + 1, b + 1))
@@ -20,6 +26,21 @@ def matrix_to_relations(matrix):
             b = -1
             a += 1
     return lst
+
+
+def relations_to_matrix(arr, size):
+    '''
+    Function for turning list of relations into a matrix.
+    :param arr: list, a list of matrix relations.
+    :param size: int, the size of matrix
+    :return: list, a list of lists which contain number of 0 and 1 and represents a matrix.
+    '''
+    matrix = [['"0"' for _ in range(size)] for _ in range(size)]
+    for relation in arr:
+        x, y = relation[0]-1, relation[1]-1
+        matrix[x][y] = '"1"'
+    csv = '\n'.join([','.join(map(str, row)) for row in matrix])
+    return csv
 
 
 def read_file(file_name):
@@ -38,32 +59,26 @@ def read_file(file_name):
         return matrix_to_relations(matrix)
 
 
-def relations_to_matrix(arr):
-    '''
-    Function for turning list of relations into a matrix.
-    :param arr: list, a list of matrix relations.
-    :return: list, a list of lists which contain number of 0 and 1 and represents a matrix.
-    '''
-    matrix = [['"0"' for _ in range(5)] for _ in range(5)]
-    for relation in arr:
-        x, y = relation[0]-1, relation[1]-1
-        matrix[x][y] = '"1"'
-    csv = '\n'.join([','.join(map(str, row)) for row in matrix])
-    return csv
-
-
-def write_file(new_file_name, relations):
+def write_file(new_file_name, relations, size):
     '''
     Function for creating a new file with relations turned into matrix.
     :param new_file_name: str, name with which a new file will be called
     :param relations: list, a list of tuples, each of which contain two digits,
     representing relations.
+    :param size: int, the size of matrix
     :return: None, function generates new file with matrix in it.
     >>> relations =[(1,1), (2,2), (3,3), (4,4), (5,5)]
-    >>> write_file("matrix1", relations)
+    >>> write_file("matrix1", relations, 5)
     '''
     with open(f"lab_discrete_math1/{new_file_name}.csv", "w") as file:
-        file.write(relations_to_matrix(relations))
+        file.write(relations_to_matrix(relations, size))
+
+
+# # ****************************************
+# # Task 2
+# # ****************************************
+
+
 
 
 if __name__ == '__main__':
