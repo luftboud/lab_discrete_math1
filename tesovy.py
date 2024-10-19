@@ -1,1 +1,0 @@
-print(type(open(r"lab_discrete_math1/test_csv.csv", "r")))

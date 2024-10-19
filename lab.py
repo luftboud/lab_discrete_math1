@@ -20,9 +20,9 @@ def matrix_to_relations(matrix):
     size = len(matrix)
     while a < size:
         b += 1
-        if matrix[a][b] == '"1"':
+        if matrix[a][b] == "1":
             lst.append((a + 1, b + 1))
-        if b == 4:
+        if b == size-1:
             b = -1
             a += 1
     return lst
@@ -35,11 +35,11 @@ def relations_to_matrix(arr, size):
     :param size: int, the size of matrix
     :return: list, a list of lists which contain number of 0 and 1 and represents a matrix.
     '''
-    matrix = [['"0"' for _ in range(size)] for _ in range(size)]
+    matrix = [[ "0" for _ in range(size)] for _ in range(size)]
     for relation in arr:
         x, y = relation[0]-1, relation[1]-1
-        matrix[x][y] = '"1"'
-    csv = '\n'.join([','.join(map(str, row)) for row in matrix])
+        matrix[x][y] = "1"
+    csv = '\n'.join([''.join(map(str, row)) for row in matrix])
     return csv
 
 
@@ -48,14 +48,16 @@ def read_file(file_name):
     A function which reads filea for turning it into a list of relatives.
     :param file_name: str, a path to the file which should be read.
     :return: list, a list of tuples with matrix turned into relatives.
-    >>> read_file("lab_discrete_math1/test_csv.csv")
+    >>> read_file("lab_discrete_math1/matrix1.csv")
     [(1, 3), (1, 5), (2, 1), (2, 4), (2, 5), (3, 1), (3, 3), (3, 5),\
  (4, 2), (4, 4), (5, 1), (5, 2), (5, 5)]
     '''
-    with open(file_name, "r") as file:
+    with open(file_name, "r", encoding="utf-8") as file:
         content = file.read()
         lines = content.splitlines()
-        matrix = [line.split(',') for line in lines]
+        matrix = []
+        for row in lines:
+            matrix.append(row)
         return matrix_to_relations(matrix)
 
 
@@ -70,7 +72,7 @@ def write_file(new_file_name, relations, size):
     >>> relations =[(1,1), (2,2), (3,3), (4,4), (5,5)]
     >>> write_file("matrix1", relations, 5)
     '''
-    with open(f"lab_discrete_math1/{new_file_name}.csv", "w") as file:
+    with open(f"lab_discrete_math1/{new_file_name}.csv", "w", encoding="utf-8") as file:
         file.write(relations_to_matrix(relations, size))
 
 
@@ -110,6 +112,27 @@ def find_symmetrical_closing(relations, file_name, size):
         if not (x1,x2) in relations:
             relations.append((x1,x2))
     write_file(f"symmetrical_{file_name}", sorted(relations), size)
+
+
+# # ****************************************
+# # Task 3
+# # ****************************************
+
+# TODO:
+def find_transitive_closing(relations, file_name, size):
+    """
+    >>> relations =[(1,1), (1,2), (2,2), (2,3), (3,3), (3,4), (4,4), (5,5)]
+    >>> find_transitive_closing(relations, "matrix55", 5)
+    """
+    transitive_matrix = relations.copy()
+    for el1 in relations:
+        for el2 in relations:
+            if el1[1] == el2[0] and not (el1[0], el2[1]) in relations:
+                transitive_matrix.append((el1[0], el2[1]))
+    write_file(f"transitive_{file_name}", sorted(transitive_matrix), size)
+
+
+
 
 
 if __name__ == '__main__':
