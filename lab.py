@@ -79,6 +79,37 @@ def write_file(new_file_name, relations, size):
 # # ****************************************
 
 
+def find_reflexive_closing(relations, file_name, size):
+    """
+    Function for matrix reflexive closing. It gets a list of relations, makes it reflexive,
+    and creates a new file.
+    :param relations: list, a list of tuples, each of which contain two digits - 
+    (x,y є Z)(x >= 1, y >= 1) - and represents relations.
+    :param file_name: str, name with which a new file will be called + prefix "reflexive_".
+    :param size: int, the size of matrix.
+    >>> find_reflexive_closing([(1,2), (1,3), (2,3), (3,1)], "matrix123", 3)
+    """
+    for el in range(1, size+1):
+        if not (el,el) in relations:
+            relations.append((el,el))
+    write_file(f"reflexive_{file_name}", sorted(relations), size)
+
+
+def find_symmetrical_closing(relations, file_name, size):
+    """
+    Function for matrix symmetrical closing. It gets a list of relations, makes it symmetrical,
+    and creates a new file.
+    :param relations: list, a list of tuples, each of which contain two digits - 
+    (x,y є Z)(x >= 1, y >= 1) - and represents relations.
+    :param file_name: str, name with which a new file will be called + prefix "symmetrical_".
+    :param size: int, the size of matrix.
+    >>> find_symmetrical_closing([(1,2), (1,3), (2,3), (3,1)], "matrix123", 3)
+    """
+    for el in relations:
+        x1, x2 = el[1], el[0]
+        if not (x1,x2) in relations:
+            relations.append((x1,x2))
+    write_file(f"symmetrical_{file_name}", sorted(relations), size)
 
 
 if __name__ == '__main__':
