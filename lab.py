@@ -3,15 +3,12 @@ Functions for reading relations from file which contains matrix
 and writing new file according to given relations
 '''
 
-# # ****************************************
-# # Task 1
-# # ****************************************
 
 def matrix_to_relations(matrix):
     '''
     A function for turning matrix into a list of relations.
     :param matrix: list, a list of lists which contain number of 0 and 1 and represents a matrix.
-    :return: list, a list of tuples, each of which contain two digits - (x,y є Z)(x >= 1, y >= 1) - 
+    :return: list, a list of tuples, each of which contain two digits - (x,y є N) - 
     and represents relations.
     '''
     a = 0
@@ -35,13 +32,23 @@ def relations_to_matrix(arr, size):
     :param size: int, the size of matrix
     :return: list, a list of lists which contain number of 0 and 1 and represents a matrix.
     '''
+    csv, new_line = '', '\n'
     matrix = [[ "0" for _ in range(size)] for _ in range(size)]
     for relation in arr:
         x, y = relation[0]-1, relation[1]-1
         matrix[x][y] = "1"
-    csv = '\n'.join([''.join(map(str, row)) for row in matrix])
+    for i, row in enumerate(matrix):
+        row = [str(el) for el in row]
+        line = ''.join(row)
+        if i == len(matrix) - 1:
+            new_line = ''
+        csv += line + new_line
     return csv
 
+
+# # ****************************************
+# # Task 1
+# # ****************************************
 
 def read_file(file_name):
     '''
@@ -49,8 +56,7 @@ def read_file(file_name):
     :param file_name: str, a path to the file which should be read.
     :return: list, a list of tuples with matrix turned into relatives.
     >>> read_file("lab_discrete_math1/matrix1.csv")
-    [(1, 3), (1, 5), (2, 1), (2, 4), (2, 5), (3, 1), (3, 3), (3, 5),\
- (4, 2), (4, 4), (5, 1), (5, 2), (5, 5)]
+    [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)]
     '''
     with open(file_name, "r", encoding="utf-8") as file:
         content = file.read()
@@ -86,7 +92,7 @@ def find_reflexive_closing(relations, file_name, size):
     Function for matrix reflexive closing. It gets a list of relations, makes it reflexive,
     and creates a new file.
     :param relations: list, a list of tuples, each of which contain two digits - 
-    (x,y є Z)(x >= 1, y >= 1) - and represents relations.
+    (x,y є N) - and represents relations.
     :param file_name: str, name with which a new file will be called + prefix "reflexive_".
     :param size: int, the size of matrix.
     >>> find_reflexive_closing([(1,2), (1,3), (2,3), (3,1)], "matrix123", 3)
@@ -102,7 +108,7 @@ def find_symmetrical_closing(relations, file_name, size):
     Function for matrix symmetrical closing. It gets a list of relations, makes it symmetrical,
     and creates a new file.
     :param relations: list, a list of tuples, each of which contain two digits - 
-    (x,y є Z)(x >= 1, y >= 1) - and represents relations.
+    (x,y є N) - and represents relations.
     :param file_name: str, name with which a new file will be called + prefix "symmetrical_".
     :param size: int, the size of matrix.
     >>> find_symmetrical_closing([(1,2), (1,3), (2,3), (3,1)], "matrix123", 3)
@@ -118,20 +124,69 @@ def find_symmetrical_closing(relations, file_name, size):
 # # Task 3
 # # ****************************************
 
-# TODO:
+
 def find_transitive_closing(relations, file_name, size):
     """
+    Function for matrix transitive closing. It gets a list of relations, converts it into
+    binary matrix, uses Warshall algorithm so it becomes transitive and (re)writes a file.  
+    :param relations: list, a list of tuples, each of which contain two digits - 
+    (x,y є N) - and represents relations.
+    :param file_name: str, name with which a new file will be called + prefix "transitive_".
+    :param size: int, the size of matrix.
     >>> relations =[(1,1), (1,2), (2,2), (2,3), (3,3), (3,4), (4,4), (5,5)]
     >>> find_transitive_closing(relations, "matrix55", 5)
     """
-    transitive_matrix = relations.copy()
-    for el1 in relations:
-        for el2 in relations:
-            if el1[1] == el2[0] and not (el1[0], el2[1]) in relations:
-                transitive_matrix.append((el1[0], el2[1]))
-    write_file(f"transitive_{file_name}", sorted(transitive_matrix), size)
+    new_matrix = []
+    matrix = relations_to_matrix(relations, size)
+    matrix = [[int(num) for num in el] for el in matrix.split("\n")]
+    w_matrix = matrix
+    for i, i_row in enumerate(matrix):
+        for j, j_row in enumerate(matrix):
+            if i == j:
+                w_matrix[j] = i_row
+            if j_row[i] == 1:
+                for k, _ in enumerate(j_row):
+                    j_row[k] = j_row[k] or i_row[k]
+            w_matrix[j] = j_row
+    for i, row in enumerate(w_matrix):
+        row = [str(el) for el in row]
+        line = ''.join(row)
+        new_matrix.append(line)
+    new_matrix = matrix_to_relations(new_matrix)
+    write_file(f"transitive_{file_name}", new_matrix, size)
 
 
+# # ****************************************
+# # Task 4
+# # ****************************************
+
+
+def find_equivalence_classes(relations, size):
+    """
+    Find equivalence classes based on relations which represent matrix.
+    :param relations: list, a list of tuples, each of which contain two digits - 
+    (x,y є N) - and represents relations.
+    :param size: int, the size of matrix.
+    >>> relations = [(1,1),(1,2),(1,3),(2,1),(2,2),(2,3),(3,1),(3,2),(3,3),(4,4)]
+    >>> find_equivalence_classes(relations, 4)
+    [[0, 1, 2], [3]]
+    """
+    matrix = relations_to_matrix(relations, size)
+    matrix = matrix.split("\n")
+    classes = []
+    for el in matrix:
+        nums = []
+        for i, n in enumerate(el):
+            if n == "1":
+                nums.append(i)
+        if nums not in classes:
+            classes.append(nums)
+    return classes
+
+
+# # ****************************************
+# # Task 5
+# # ****************************************
 
 
 
