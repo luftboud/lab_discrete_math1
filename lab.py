@@ -188,6 +188,17 @@ def find_equivalence_classes(relations, size):
 # # ****************************************
 
 
+def transitive(relations):
+    '''
+    transitive
+    >>> transitive([(1,2), (1, 3), (2,3)])
+    True
+    '''
+    for smth in relations:
+        for any_element in relations:
+            if smth[1] == any_element[0] and not (smth[0], any_element[1]) in relations:
+                return False
+    return True
 
 if __name__ == '__main__':
     import doctest
