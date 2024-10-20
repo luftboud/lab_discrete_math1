@@ -1,6 +1,5 @@
 '''
-Functions for reading relations from file which contains matrix 
-and writing new file according to given relations
+Functions for operations with matrix
 '''
 
 
@@ -95,7 +94,7 @@ def find_reflexive_closing(relations, file_name, size):
     (x,y є N) - and represents relations.
     :param file_name: str, name with which a new file will be called + prefix "reflexive_".
     :param size: int, the size of matrix.
-    >>> find_reflexive_closing([(1,2), (1,3), (2,3), (3,1)], "matrix123", 3)
+    >>> find_reflexive_closing([(1,2), (1,3), (2,3), (3,1)], "matrix3", 3)
     """
     for el in range(1, size+1):
         if not (el,el) in relations:
@@ -111,7 +110,7 @@ def find_symmetrical_closing(relations, file_name, size):
     (x,y є N) - and represents relations.
     :param file_name: str, name with which a new file will be called + prefix "symmetrical_".
     :param size: int, the size of matrix.
-    >>> find_symmetrical_closing([(1,2), (1,3), (2,3), (3,1)], "matrix123", 3)
+    >>> find_symmetrical_closing([(1,2), (1,3), (2,3), (3,1)], "matrix4", 3)
     """
     for el in relations:
         x1, x2 = el[1], el[0]
@@ -134,7 +133,7 @@ def find_transitive_closing(relations, file_name, size):
     :param file_name: str, name with which a new file will be called + prefix "transitive_".
     :param size: int, the size of matrix.
     >>> relations =[(1,1), (1,2), (2,2), (2,3), (3,3), (3,4), (4,4), (5,5)]
-    >>> find_transitive_closing(relations, "matrix55", 5)
+    >>> find_transitive_closing(relations, "matrix5", 5)
     """
     new_matrix = []
     matrix = relations_to_matrix(relations, size)
